@@ -34,10 +34,24 @@ module.exports = {
 				products
 				 })
 			}
-		})
-    
-		
+		})		
 	 },
+	 deleteProduct: (req, res) => {
+		const { id } = req.body;
+	
+		Product.deleteOne({
+			_id: id
+		}, (err) => {
+			if (err) {
+				res.status(400).json({ succes: false })
+				
+			} else {
+				res.status(201).json({
+					succes: true,
+				})
+			}
+		}) 
+	}
 }
 
 

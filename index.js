@@ -24,6 +24,7 @@ app.use(cors());
 app.route('/products')
 .get(productsController.getProducts)
 .post(productsController.addProduct)
+.delete(productsController.deleteProduct)
 
 app.listen(cfg.port, () => {
   console.log(`Example app listening at http://localhost:${cfg.port}`)
