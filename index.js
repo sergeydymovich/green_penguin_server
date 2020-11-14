@@ -8,7 +8,6 @@ const morgan = require("morgan");
 const cors = require("cors");
 const productsController = require('./controllers/products');
 
-
 const uri = `mongodb+srv://${cfg.dbUser}:${cfg.dbUserPassword}@greenpenguin.db9aw.mongodb.net/${cfg.dbName}?retryWrites=true&w=majority`;
 
 mongoose.connect(uri, {
@@ -22,9 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(cors());
 
-
-
-
+app.route('/products')
+.get(productsController.getProducts)
+.post(productsController.addProduct)
 
 app.listen(cfg.port, () => {
   console.log(`Example app listening at http://localhost:${cfg.port}`)
