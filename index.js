@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const cors = require("cors");
 const productsController = require('./controllers/products');
+const categoriesController = require('./controllers/categories');
 
 const uri = `mongodb+srv://${cfg.dbUser}:${cfg.dbUserPassword}@greenpenguin.db9aw.mongodb.net/${cfg.dbName}?retryWrites=true&w=majority`;
 
@@ -25,6 +26,9 @@ app.route('/products')
 .get(productsController.getProducts)
 .post(productsController.addProduct)
 .delete(productsController.deleteProduct)
+
+app.route("/categories")
+.get(categoriesController.getCategories)
 
 app.listen(cfg.port, () => {
   console.log(`Example app listening at http://localhost:${cfg.port}`)
