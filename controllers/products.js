@@ -2,16 +2,18 @@ const Product = require('../models/product.js');
 
 module.exports = {
 	addProduct: (req, res) => {
-		const { name, volume, weight, price, image, category, brand } = req.body;
+		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
 	
 		Product.create({
 			name,
 			volume,
 			weight,
 			price,
-			image,
 			category,
-			brand
+			subCategory,
+			brand,			
+			description,
+			image			 
 		}, (err, product) => {
 			if (err) {
 				res.status(400).json({ errorMessage: err._message })			
@@ -51,7 +53,26 @@ module.exports = {
 				})
 			}
 		}) 
-	}
+	},
+	changeProduct: (req, res) => {
+		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
+	
+		Product.updateOne({ _id },
+			{
+				$set: {
+					name, volume, weight, price, category, subCategory, brand, description, image,
+				}  
+		}, (err, product) => {
+			if (err) {
+				res.status(400).json({ succes: false })
+				
+			} else {
+
+				res.json({ product })
+			}
+		}) 
+	},
+
 }
 
 

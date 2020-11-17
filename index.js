@@ -17,7 +17,7 @@ mongoose.connect(uri, {
   serverSelectionTimeoutMS: 5000
 }).catch(err => console.log(err.reason));
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "3mb"}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(cors());
@@ -26,6 +26,7 @@ app.route('/products')
 .get(productsController.getProducts)
 .post(productsController.addProduct)
 .delete(productsController.deleteProduct)
+.put(productsController.changeProduct)
 
 app.route("/categories")
 .get(categoriesController.getCategories)

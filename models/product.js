@@ -2,13 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  	name: { type: String, required: true },
+  	name: { type: String },
 		volume: { type: String },
 		weight: { type: String },
 		price: { type: String },
-		image: { data: Buffer  , contentType: String  },
-		category: { type: String, required: true },
-		brand: { type: String, required: true }
+		category: { type: String },
+		subCategory: { type: String },
+		brand: { type: String  },
+		description: {type: String},
+		image: { 
+			type: String
+		 }		
 }, { 
 	timestamps: true 
 });
