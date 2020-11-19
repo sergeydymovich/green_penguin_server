@@ -1,9 +1,21 @@
 const Product = require('../models/product.js');
+const Category = require('../models/category.js');
 
 module.exports = {
-	addProduct: (req, res) => {
+	addProduct: (req, res) => {	
 		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
-	
+
+
+		Category.update({name : category},{$addToSet: { subcategories: subCategory}}, {upsert: true}, (err, cat) => {
+			if (err) {
+				console.log("err",err)		
+			} else {
+				console.log("category:",cat)
+			}
+		})
+
+		// {$regex : subCategory, $options :  'i' }  {$regex : category, $options :  'i' }
+
 		Product.create({
 			name,
 			volume,
