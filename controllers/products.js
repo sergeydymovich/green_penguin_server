@@ -5,16 +5,16 @@ module.exports = {
 	addProduct: (req, res) => {	
 		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
 
-
-		Category.update({name : category},{$addToSet: { subcategories: subCategory}}, {upsert: true}, (err, cat) => {
+		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
+		
+		Category.update({name : category},subCategObj, {upsert: true}, (err, cat) => {
 			if (err) {
 				console.log("err",err)		
 			} else {
 				console.log("category:",cat)
 			}
 		})
-
-		// {$regex : subCategory, $options :  'i' }  {$regex : category, $options :  'i' }
+		
 
 		Product.create({
 			name,
@@ -37,8 +37,14 @@ module.exports = {
 		}) 
 	},
 	getProducts: (req, res) => {
-
-		Product.find({}, (err, products) => {
+		const category = req.param('category');
+		const subCategory = req.param('subcategory');
+		let findObj = category ? { category: category } : {};
+		if (subCategory) {
+			findObj = { category: category,  subCategory: subCategory }
+		}
+		console.log(findObj)
+		Product.find(findObj, (err, products) => {
 			if (err) {
 				console.log("error", err)
 				res.status(400).json({ succes: false })
@@ -68,6 +74,15 @@ module.exports = {
 	},
 	changeProduct: (req, res) => {
 		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
+		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
+		
+		Category.update({name : category},subCategObj, {upsert: true}, (err, cat) => {
+			if (err) {
+				console.log("err",err)		
+			} else {
+				console.log("category:",cat)
+			}
+		})
 	
 		Product.updateOne({ _id },
 			{
