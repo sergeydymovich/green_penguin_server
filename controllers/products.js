@@ -39,23 +39,34 @@ module.exports = {
 	getProducts: (req, res) => {
 		const category = req.param('category');
 		const subCategory = req.param('subcategory');
+		const limit = req.param("limit");
+		const offset = req.param("offset");
 		let findObj = category ? { category: category } : {};
 		if (subCategory) {
 			findObj = { category: category,  subCategory: subCategory }
 		}
-		console.log(findObj)
-		Product.find(findObj, (err, products) => {
+
+		
+		Product.count().then(count => Product.find(findObj).limit(Number(limit)).skip(Number(offset)).exec((err, products) => {
 			if (err) {
-				console.log("error", err)
-				res.status(400).json({ succes: false })
-				
+			 res.status(400).json({ succes: false })		 
 			} else {
-				res.json({ 
-				products
-				 })
+				if (category || subCategory) {
+					 Product.find(findObj).count().exec((err, amount) => {
+						if (err) {
+							res.status(400).json({ succes: false })
+							
+						} else {
+							res.json({ products, count: amount })
+						}
+					});
+				} else {	
+							
+				 res.json({ products, count })
+				}			
 			}
-		})		
-	 },
+		 }) )
+	}, 
 	 deleteProduct: (req, res) => {
 		const { id } = req.body;
 	
