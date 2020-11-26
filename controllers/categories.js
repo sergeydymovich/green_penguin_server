@@ -1,18 +1,25 @@
 const Category = require('../models/category.js');
+const Brand = require('../models/brand.js');
 
 module.exports = {
 
 	getCategories: (req, res) => {
-
+	 
 		Category.find({}, (err, categories) => {
+
 			if (err) {
-				console.log("error", err)
-				res.status(400).json({ succes: false })
-				
+				res.status(400).json({ succes: false })		
 			} else {
-				res.json({ 
-				categories
-				 })
+				Brand.find({}, (error, brands) => {
+					if (error) {
+						console.log(error);
+					} else {
+						res.json({ 
+							categories,
+							brands
+							 })
+					}
+				});			
 			}
 		})		
 	 },

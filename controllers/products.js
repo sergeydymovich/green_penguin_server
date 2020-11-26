@@ -1,21 +1,14 @@
 const Product = require('../models/product.js');
 const Category = require('../models/category.js');
+const Brand = require('../models/brand.js');
 
 module.exports = {
 	addProduct: (req, res) => {	
 		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
-
 		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
-		
-		Category.update({name : category},subCategObj, {upsert: true}, (err, cat) => {
-			if (err) {
-				console.log("err",err)		
-			} else {
-				console.log("category:",cat)
-			}
-		})
-		
 
+		Brand.create({name: brand})
+		Category.update({name : category},subCategObj, {upsert: true})
 		Product.create({
 			name,
 			volume,
@@ -87,13 +80,8 @@ module.exports = {
 		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
 		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
 		
-		Category.update({name : category},subCategObj, {upsert: true}, (err, cat) => {
-			if (err) {
-				console.log("err",err)		
-			} else {
-				console.log("category:",cat)
-			}
-		})
+		Category.update({name : category},subCategObj, {upsert: true})
+		Brand.create({name: brand})
 	
 		Product.updateOne({ _id },
 			{

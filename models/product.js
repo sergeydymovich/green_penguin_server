@@ -10,9 +10,7 @@ const userSchema = new Schema({
 		subCategory: { type: String },
 		brand: { type: String  },
 		description: {type: String},
-		image: { 
-			type: String
-		 }		
+		image: { type: String }		
 }, { 
 	timestamps: true 
 });

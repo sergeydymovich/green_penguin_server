@@ -3,7 +3,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const cfg  = require("./config.js");
-const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const cors = require("cors");
 const productsController = require('./controllers/products');
