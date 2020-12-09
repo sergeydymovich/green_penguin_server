@@ -5,7 +5,7 @@ const userSchema = new Schema({
   	name: { type: String },
 		volume: { type: String },
 		weight: { type: String },
-		price: { type: String },
+		price: { type: Number },
 		category: { type: String },
 		subCategory: { type: String },
 		brand: { type: String  },

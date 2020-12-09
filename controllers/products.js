@@ -1,14 +1,19 @@
 const Product = require('../models/product.js');
 const Category = require('../models/category.js');
-const Brand = require('../models/brand.js');
 
 module.exports = {
 	addProduct: (req, res) => {	
-		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
-		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
+		const { name, volume, weight, price, category, subCategory, brand, description } = req.body;
+		const subCategObj = subCategory ? { $addToSet: { subcategories: subCategory, brands: brand} } : { $addToSet: { brands: brand } } ;
 
-		Brand.create({name: brand})
-		Category.update({name : category},subCategObj, {upsert: true})
+		Category.update({name : category }, subCategObj, {upsert: true}, (err) => {
+			if (err) {
+				console.log(err)			
+			} else {
+				console.log("succes");
+			}
+		} )
+
 		Product.create({
 			name,
 			volume,
@@ -18,7 +23,7 @@ module.exports = {
 			subCategory,
 			brand,			
 			description,
-			image			 
+			image: req.file.path	 
 		}, (err, product) => {
 			if (err) {
 				res.status(400).json({ errorMessage: err._message })			
@@ -32,33 +37,30 @@ module.exports = {
 	getProducts: (req, res) => {
 		const category = req.param('category');
 		const subCategory = req.param('subcategory');
+		const brands = req.param("brands");
+		const sort = req.param("sort");
+		const filterWord = req.param("word");
 		const limit = req.param("limit");
 		const offset = req.param("offset");
-		let findObj = category ? { category: category } : {};
-		if (subCategory) {
-			findObj = { category: category,  subCategory: subCategory }
-		}
 
+		let findObj = {};
+		if (category) findObj.category = category;
+		if (subCategory) findObj.subCategory = subCategory;
+		if (brands) findObj.brand = { $in: brands.split(",") };
+		if (filterWord) findObj.name = { $regex : filterWord, $options :  'i' };
+
+		let sortObj = {};
+		if (!sort) sortObj = { _id: -1};
+		if (sort === "price") sortObj = { price: -1 };
+		if (sort === "alphabet") sortObj = { name: 1 };
 		
-		Product.count().then(count => Product.find(findObj).limit(Number(limit)).skip(Number(offset)).exec((err, products) => {
+		Product.count(findObj).then(count => Product.find(findObj).limit(Number(limit)).skip(Number(offset)).sort(sortObj).exec((err, products) => {
 			if (err) {
 			 res.status(400).json({ succes: false })		 
 			} else {
-				if (category || subCategory) {
-					 Product.find(findObj).count().exec((err, amount) => {
-						if (err) {
-							res.status(400).json({ succes: false })
-							
-						} else {
-							res.json({ products, count: amount })
-						}
-					});
-				} else {	
-							
-				 res.json({ products, count })
-				}			
+				 res.json({ products, count })	
 			}
-		 }) )
+		 }))
 	}, 
 	 deleteProduct: (req, res) => {
 		const { id } = req.body;
@@ -78,18 +80,25 @@ module.exports = {
 	},
 	changeProduct: (req, res) => {
 		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
-		const subCategObj = subCategory ? {$addToSet: { subcategories: subCategory}} : {};
+		const subCategObj = subCategory ? { $addToSet: { subcategories: subCategory, brands: brand} } : { $addToSet: { brands: brand } } ;
+		const img = req.file ?  req.file.path : image;
 		
-		Category.update({name : category},subCategObj, {upsert: true})
-		Brand.create({name: brand})
-	
+		Category.update({name : category }, subCategObj, {upsert: true}, (err) => {
+			if (err) {
+				console.log(err)			
+			} else {
+				console.log("succes");
+			}
+		})
+
 		Product.updateOne({ _id },
 			{
 				$set: {
-					name, volume, weight, price, category, subCategory, brand, description, image,
+					name, volume, weight, price, category, subCategory, brand, description, image: img,
 				}  
 		}, (err, product) => {
 			if (err) {
+				console.log(err)
 				res.status(400).json({ succes: false })
 				
 			} else {
