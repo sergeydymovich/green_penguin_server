@@ -1,18 +1,12 @@
 const Product = require('../models/product.js');
-const Category = require('../models/category.js');
+const categoriesController = require("../controllers/categories");
 
 module.exports = {
 	addProduct: (req, res) => {	
-		const { name, volume, weight, price, category, subCategory, brand, description } = req.body;
-		const subCategObj = subCategory ? { $addToSet: { subcategories: subCategory, brands: brand} } : { $addToSet: { brands: brand } } ;
+		const { name, volume, weight, price, category, subCategory, brand, description, image } = req.body;
+		const img = req.file ?  req.file.path : image;
 
-		Category.update({name : category }, subCategObj, {upsert: true}, (err) => {
-			if (err) {
-				console.log(err)			
-			} else {
-				console.log("succes");
-			}
-		} )
+		categoriesController.changeCategories(category, subCategory, brand);
 
 		Product.create({
 			name,
@@ -23,7 +17,7 @@ module.exports = {
 			subCategory,
 			brand,			
 			description,
-			image: req.file.path	 
+			image: img	 
 		}, (err, product) => {
 			if (err) {
 				res.status(400).json({ errorMessage: err._message })			
@@ -82,7 +76,7 @@ module.exports = {
 		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
 		const subCategObj = subCategory ? { $addToSet: { subcategories: subCategory, brands: brand} } : { $addToSet: { brands: brand } } ;
 		const img = req.file ?  req.file.path : image;
-		
+
 		Category.update({name : category }, subCategObj, {upsert: true}, (err) => {
 			if (err) {
 				console.log(err)			

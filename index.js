@@ -9,8 +9,6 @@ const cors = require("cors");
 const productsController = require('./controllers/products');
 const categoriesController = require('./controllers/categories');
 
-
-
 const uri = `mongodb+srv://${cfg.dbUser}:${cfg.dbUserPassword}@greenpenguin.db9aw.mongodb.net/${cfg.dbName}?retryWrites=true&w=majority`;
 
 mongoose.connect(uri, {
