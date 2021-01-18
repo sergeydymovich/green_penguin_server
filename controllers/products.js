@@ -79,17 +79,28 @@ module.exports = {
 		}) 
 	},
 	changeProduct: (req, res) => {
-		const { name, volume, weight, price, category, subCategory, brand, description, image, _id } = req.body;
-		const img = req.file ?  req.file.path : image;
-
+		const { name, volume, weight, price, category, subCategory, brand, description, _id } = req.body;
 		categoriesController.changeCategories(category, subCategory, brand);
 
-		Product.updateOne({ _id },
-			{
-				$set: {
-					name, volume, weight, price, category, subCategory, brand, description, image: img,
-				}  
-		}, (err, product) => {
+		let productUpdateObj = {
+			name,
+			volume,
+			weight,
+			price,
+			category,
+			subCategory,
+			brand,
+			description,
+		}
+
+		if (req.file) {
+			productUpdateObj.image = req.file.path;
+		}
+
+		Product.updateOne(
+			{ _id },
+			{ $set: productUpdateObj },
+			(err, product) => {
 			if (err) {
 				console.log(err)
 				res.status(400).json({ succes: false })
