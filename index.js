@@ -8,6 +8,7 @@ const upload = require("./upload");
 const cors = require("cors");
 const productsController = require('./controllers/products');
 const categoriesController = require('./controllers/categories');
+const brandsController = require('./controllers/brands');
 
 const uri = `mongodb+srv://${cfg.dbUser}:${cfg.dbUserPassword}@greenpenguin.db9aw.mongodb.net/${cfg.dbName}?retryWrites=true&w=majority`;
 
@@ -31,6 +32,9 @@ app.route('/products')
 
 app.route("/categories")
 .get(categoriesController.getCategories)
+
+app.route("/brands")
+.get(brandsController.getBrands)
 
 app.listen(cfg.port, () => {
   console.log(`Example app listening at http://localhost:${cfg.port}`)
